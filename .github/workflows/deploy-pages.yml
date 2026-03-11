@@ -1,0 +1,67 @@
+name: Deploy Skills Marketplace to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate skills.json
+        run: python scripts/generate_skills_json.py
+
+      - name: Validate skills.json
+        run: |
+          python - <<'EOF'
+          import json, sys
+          with open("docs/skills.json") as f:
+              skills = json.load(f)
+          assert isinstance(skills, list), "skills.json must be a JSON array"
+          for s in skills:
+              assert "name" in s, f"Missing 'name' in {s}"
+              assert "description" in s, f"Missing 'description' in {s}"
+          print(f"✅ Validated {len(skills)} skill(s)")
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

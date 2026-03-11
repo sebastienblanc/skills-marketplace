@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCIAM Skills Marketplace</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --tag-bg: #1f6feb22;
+      --tag-border: #1f6feb55;
+      --tag-text: #58a6ff;
+      --badge-beginner: #1a7f37;
+      --badge-intermediate: #9a6700;
+      --badge-advanced: #cf222e;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 1.5rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .logo-icon { font-size: 1.4rem; }
+    .logo-sub { color: var(--text-muted); font-weight: 400; font-size: 0.85rem; }
+
+    .search-wrap {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    #search {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 0.45rem 0.75rem 0.45rem 2.4rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #search:focus { border-color: #1f6feb; }
+
+    .header-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .header-link:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 3.5rem 2rem 2rem;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #e6edf3 30%, #58a6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin: 0 auto 1.8rem;
+      line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-secondary {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover { border-color: #8b949e; }
+
+    /* ── Filters ── */
+    .filters-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 1.5rem;
+    }
+    .filters-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+    #tag-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag-filter {
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
+      color: var(--tag-text);
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .tag-filter:hover, .tag-filter.active {
+      background: #1f6feb44;
+      border-color: #58a6ff;
+    }
+    .tag-filter.active { font-weight: 600; }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    #results-count { }
+    .sort-wrap { display: flex; align-items: center; gap: 0.5rem; }
+    #sort-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    /* ── Grid ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+    #skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+      cursor: default;
+    }
+    .card:hover {
+      border-color: #58a6ff55;
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+    .card-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .card-meta { flex: 1; min-width: 0; }
+    .card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .card-author {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
+      color: var(--tag-text);
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .tag:hover { background: #1f6feb44; }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .badge-difficulty {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.18rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+    .badge-difficulty.beginner { color: #3fb950; border-color: #3fb95044; background: #3fb95011; }
+    .badge-difficulty.intermediate { color: #d29922; border-color: #d2992244; background: #d2992211; }
+    .badge-difficulty.advanced { color: #f85149; border-color: #f8514944; background: #f8514911; }
+    .badge-difficulty.unknown { color: var(--text-muted); border-color: var(--border); background: transparent; }
+
+    .badge-license {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .card-actions { display: flex; gap: 0.5rem; }
+    .btn-sm {
+      font-size: 0.78rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .btn-sm:hover { border-color: #8b949e; background: #30363d; }
+    .btn-sm.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-sm.primary:hover { background: var(--accent-hover); }
+
+    /* ── Empty state ── */
+    #empty {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+    }
+    #empty svg { margin-bottom: 1rem; opacity: 0.4; }
+    #empty h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--text); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--tag-text); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.6rem; }
+      .header-inner { gap: 0.75rem; }
+      .logo-sub { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <span class="logo-icon">⚡</span>
+      <span>SCIAM<span class="logo-sub"> / Skills Marketplace</span></span>
+    </a>
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/>
+      </svg>
+      <input id="search" type="search" placeholder="Search skills…" autocomplete="off" />
+    </div>
+    <a class="header-link" href="https://github.com/sciam/skills-marketplace" target="_blank">
+      GitHub ↗
+    </a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>AI Skills Marketplace</h1>
+  <p>Curated prompt skills that turn your AI assistant into a specialized expert.<br/>Open source, copy-paste ready, community-driven.</p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="https://github.com/sciam/skills-marketplace/blob/main/CONTRIBUTING.md" target="_blank">
+      ＋ Submit a Skill
+    </a>
+    <a class="btn btn-secondary" href="https://github.com/sciam/skills-marketplace" target="_blank">
+      View on GitHub
+    </a>
+  </div>
+</section>
+
+<div class="filters-wrap">
+  <p class="filters-label">Filter by tag</p>
+  <div id="tag-filters"></div>
+</div>
+
+<div class="stats-bar">
+  <span id="results-count"></span>
+  <div class="sort-wrap">
+    <span>Sort by</span>
+    <select id="sort-select">
+      <option value="name">Name</option>
+      <option value="difficulty">Difficulty</option>
+      <option value="author">Author</option>
+    </select>
+  </div>
+</div>
+
+<main>
+  <div id="skills-grid"></div>
+  <div id="empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <h3>No skills found</h3>
+    <p>Try a different search term or clear the tag filter.</p>
+  </div>
+</main>
+
+<footer>
+  Built with ♥ by <a href="https://sciam.fr" target="_blank">SCIAM</a> &nbsp;·&nbsp;
+  <a href="https://github.com/sciam/skills-marketplace" target="_blank">Contribute on GitHub</a>
+</footer>
+
+<script>
+  const DIFFICULTY_ORDER = { beginner: 0, intermediate: 1, advanced: 2 };
+  let allSkills = [];
+  let activeTag = null;
+
+  async function loadSkills() {
+    const res = await fetch('skills.json');
+    allSkills = await res.json();
+    buildTagFilters();
+    render();
+  }
+
+  function buildTagFilters() {
+    const tagSet = new Set();
+    allSkills.forEach(s => (s.tags || []).forEach(t => tagSet.add(t)));
+    const sorted = [...tagSet].sort();
+    const container = document.getElementById('tag-filters');
+    container.innerHTML = '';
+    sorted.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'tag-filter';
+      btn.textContent = tag;
+      btn.addEventListener('click', () => toggleTag(tag, btn));
+      container.appendChild(btn);
+    });
+  }
+
+  function toggleTag(tag, btn) {
+    if (activeTag === tag) {
+      activeTag = null;
+      btn.classList.remove('active');
+    } else {
+      document.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
+      activeTag = tag;
+      btn.classList.add('active');
+    }
+    render();
+  }
+
+  function render() {
+    const q = document.getElementById('search').value.toLowerCase().trim();
+    const sort = document.getElementById('sort-select').value;
+
+    let skills = allSkills.filter(s => {
+      const matchTag = !activeTag || (s.tags || []).includes(activeTag);
+      const matchQ = !q || [s.name, s.description, s.author, ...(s.tags || [])].some(f => (f||'').toLowerCase().includes(q));
+      return matchTag && matchQ;
+    });
+
+    skills = skills.slice().sort((a, b) => {
+      if (sort === 'difficulty') return (DIFFICULTY_ORDER[a.difficulty] ?? 1) - (DIFFICULTY_ORDER[b.difficulty] ?? 1);
+      if (sort === 'author') return (a.author||'').localeCompare(b.author||'');
+      return a.name.localeCompare(b.name);
+    });
+
+    const grid = document.getElementById('skills-grid');
+    const empty = document.getElementById('empty');
+    document.getElementById('results-count').textContent = `${skills.length} skill${skills.length !== 1 ? 's' : ''}`;
+
+    if (skills.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    grid.innerHTML = skills.map(skill => cardHTML(skill)).join('');
+    grid.querySelectorAll('.tag').forEach(el => {
+      el.addEventListener('click', () => {
+        const tag = el.dataset.tag;
+        const btn = [...document.querySelectorAll('.tag-filter')].find(b => b.textContent === tag);
+        if (btn) toggleTag(tag, btn); else { activeTag = tag; render(); }
+      });
+    });
+  }
+
+  function cardHTML(s) {
+    const tags = (s.tags || []).map(t =>
+      `<span class="tag" data-tag="${t}">${t}</span>`
+    ).join('');
+    const diff = s.difficulty || 'unknown';
+    const repoBase = 'https://github.com/sciam/skills-marketplace/blob/main/skills';
+    return `
+    <article class="card">
+      <div class="card-header">
+        <div class="card-icon">${s.icon || '🛠️'}</div>
+        <div class="card-meta">
+          <div class="card-name">${escHtml(s.name)}</div>
+          <div class="card-author">by ${escHtml(s.author || 'Unknown')}</div>
+        </div>
+      </div>
+      <p class="card-desc">${escHtml(s.description || '')}</p>
+      <div class="card-tags">${tags}</div>
+      <div class="card-footer">
+        <div style="display:flex;align-items:center;gap:0.6rem">
+          <span class="badge-difficulty ${diff}">${diff}</span>
+          <span class="badge-license">${escHtml(s.license || '')}</span>
+        </div>
+        <div class="card-actions">
+          <a class="btn-sm" href="${repoBase}/${encodeURIComponent(s.name)}/SKILL.md" target="_blank">Skill ↗</a>
+          ${s.hasReference ? `<a class="btn-sm primary" href="${repoBase}/${encodeURIComponent(s.name)}/references/REFERENCE.md" target="_blank">Reference ↗</a>` : ''}
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('search').addEventListener('input', render);
+  document.getElementById('sort-select').addEventListener('change', render);
+
+  loadSkills();
+</script>
+</body>
+</html>

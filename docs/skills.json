@@ -1,0 +1,18 @@
+[
+  {
+    "name": "spring2quarkus",
+    "description": "Expert assistant for migrating Spring Boot applications to Quarkus from scratch. Use this skill when you need to analyze a Spring Boot project and plan or execute a full migration to Quarkus, including assessing complexity, identifying risks, and producing a step-by-step migration strategy with T-shirt sizing estimates.",
+    "license": "Apache-2.0",
+    "author": "SCIAM",
+    "tags": [
+      "java",
+      "spring-boot",
+      "quarkus",
+      "migration",
+      "architecture"
+    ],
+    "icon": "🔄",
+    "difficulty": "advanced",
+    "hasReference": true
+  }
+]
